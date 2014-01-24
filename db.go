@@ -35,9 +35,10 @@ func (db *DB) C(name string) *mgo.Collection {
 	return db.DB().C(name)
 }
 
-func (db *DB) Upsert(name string, q Query, v interface{}) error {
-	_, err := db.C(name).Upsert(q, v)
-	return err
+func (db *DB) Upsert(name string, q Query, v interface{}) (updated bool, err error) {
+	info, err := db.C(name).Upsert(q, v)
+	updated = info.UpsertedId != nil
+	return
 }
 
 func (db *DB) EnsureIndex() error {

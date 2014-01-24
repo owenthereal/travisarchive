@@ -1,6 +1,9 @@
 package main
 
-import "fmt"
+import (
+	"log"
+	"strings"
+)
 
 func NewCrawler(travis *Travis, db *DB) *Crawler {
 	return &Crawler{travis, db}
@@ -17,13 +20,19 @@ func (c *Crawler) Crawl() error {
 		return err
 	}
 
+	newBuilds := []string{}
 	for _, repo := range repos {
-		err := c.DB.Upsert("repos", Query{"lastbuildnumber": repo.LastBuildNumber}, repo)
+		updated, err := c.DB.Upsert("repos", Query{"lastbuildnumber": repo.LastBuildNumber}, repo)
 		if err != nil {
 			return err
 		}
-		fmt.Println(repo.Slug)
+
+		if updated {
+			newBuilds = append(newBuilds, repo.Slug)
+		}
 	}
+
+	log.Printf("%d new builds harvested: %s\n", len(newBuilds), strings.Join(newBuilds, ", "))
 
 	return nil
 }
