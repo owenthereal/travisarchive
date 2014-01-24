@@ -22,7 +22,7 @@ func (c *Crawler) Crawl() error {
 
 	newBuilds := []string{}
 	for _, repo := range repos {
-		updated, err := c.DB.Upsert("repos", Query{"lastbuildnumber": repo.LastBuildNumber}, repo)
+		updated, err := c.DB.Upsert("new_builds", Query{"lastbuildid": repo.LastBuildID}, repo)
 		if err != nil {
 			return err
 		}
@@ -32,7 +32,7 @@ func (c *Crawler) Crawl() error {
 		}
 	}
 
-	log.Printf("%d new builds harvested: %s\n", len(newBuilds), strings.Join(newBuilds, ", "))
+	log.Printf("harvested %d builds with %d new builds: %s\n", len(repos), len(newBuilds), strings.Join(newBuilds, ", "))
 
 	return nil
 }

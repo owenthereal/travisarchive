@@ -37,14 +37,14 @@ func (db *DB) C(name string) *mgo.Collection {
 
 func (db *DB) Upsert(name string, q Query, v interface{}) (updated bool, err error) {
 	info, err := db.C(name).Upsert(q, v)
-	updated = info.UpsertedId != nil
+	updated = info != nil && info.UpsertedId != nil
 	return
 }
 
 func (db *DB) EnsureIndex() error {
 	indexes := []mgo.Index{
 		{
-			Key:        []string{"lastbuildnumber"},
+			Key:        []string{"lastbuildid"},
 			Unique:     true,
 			DropDups:   true,
 			Background: true,
@@ -52,7 +52,7 @@ func (db *DB) EnsureIndex() error {
 	}
 
 	for _, index := range indexes {
-		err := db.C("repos").EnsureIndex(index)
+		err := db.C("new_builds").EnsureIndex(index)
 		if err != nil {
 			return err
 		}
