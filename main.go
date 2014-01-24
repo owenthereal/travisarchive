@@ -6,8 +6,18 @@ import (
 )
 
 func main() {
+	db, err := NewDB("mongodb://localhost/travisarchive")
+	if err != nil {
+		log.Fatal(err)
+	}
+	err = db.EnsureIndex()
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer db.Close()
+
 	travis := NewTravis("https://api.travis-ci.org")
-	crawler := NewCrawler(travis)
+	crawler := NewCrawler(travis, db)
 
 	c := time.Tick(10 * time.Second)
 	for _ = range c {
