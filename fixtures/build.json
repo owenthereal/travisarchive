@@ -1,0 +1,71 @@
+{
+  "matrix": [
+    {
+      "allow_failure": false,
+      "finished_at": "2014-01-24T19:37:04Z",
+      "started_at": "2014-01-24T19:36:03Z",
+      "result": 0,
+      "config": {
+        "global_env": "GITHUB_USERNAME=[secure] GITHUB_PASSWORD=[secure]",
+        ".result": "configured",
+        "branches": {
+          "except": [
+            "mvn-repo",
+            "travis"
+          ]
+        },
+        "notifications": {
+          "irc": "irc.esper.net:5555#vayleryn-dev"
+        },
+        "script": "mvn deploy --settings target/travis/settings.xml",
+        "before_install": "git clone -b travis `git config --get remote.origin.url` target/travis",
+        "language": "java"
+      },
+      "number": "20.1",
+      "repository_id": 1584783,
+      "id": 17567142
+    }
+  ],
+  "event_type": "push",
+  "compare_url": "https://github.com/Vayleryn/VaylerynLib/compare/3c95f7e77080...3a5d19f8cbb0",
+  "committer_email": "lucariatias@gmail.com",
+  "committer_name": "Lucariatias",
+  "started_at": "2014-01-24T19:36:03Z",
+  "status": 0,
+  "result": 0,
+  "state": "finished",
+  "config": {
+    "global_env": [
+      {
+        "secure": "WgEcxigFwg2jWmeuaz+AacJgZWoDx7H8vNhtG5gGrThZNS99EnQkKEs+eC23xOz6b8s60V19kDzxC7tLhsEoRl1hx2tWqWNbBovAoMBJb+T2BegL5UJUgxip12SGBHpCjh+Lzou8A/NrBmgV6vB6JT4uQftrLW2zbu95QvcPS9k="
+      },
+      {
+        "secure": "uNr4vw81Uz65q91OOEn1lXh4PsdzeBvOVfjRakDBDqY8TDg7Ew9nMmbZpZTqJab21yM4MCHj+S1zZZbG6dXE4VOM0ghbyNm3LG4QpwJqJmqo6tqAQOpSixPXaeR81vd8WpliB96fncOj1EZ5X2AtWtn9/txOy9UUpJytlDXOVlQ="
+      }
+    ],
+    ".result": "configured",
+    "branches": {
+      "except": [
+        "mvn-repo",
+        "travis"
+      ]
+    },
+    "notifications": {
+      "irc": "irc.esper.net:5555#vayleryn-dev"
+    },
+    "script": "mvn deploy --settings target/travis/settings.xml",
+    "before_install": "git clone -b travis `git config --get remote.origin.url` target/travis",
+    "language": "java"
+  },
+  "number": "20",
+  "repository_id": 1584783,
+  "id": 17567141,
+  "finished_at": "2014-01-24T19:37:04Z",
+  "duration": 61,
+  "commit": "3a5d19f8cbb0dda7072c6ee764a7981893187337",
+  "branch": "master",
+  "message": "Add methods for character food level, closes #10",
+  "committed_at": "2014-01-24T19:34:35Z",
+  "author_name": "Lucariatias",
+  "author_email": "lucariatias@gmail.com"
+}

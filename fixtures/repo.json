@@ -1,0 +1,14 @@
+{
+  "last_build_finished_at": "2014-01-24T19:50:04Z",
+  "last_build_started_at": "2014-01-24T19:49:18Z",
+  "last_build_language": null,
+  "last_build_duration": 46,
+  "id": 1584783,
+  "slug": "Vayleryn/VaylerynLib",
+  "description": "A collection of interfaces and classes for use on Vayleryn to allow easy access to plugins that provide a particular service",
+  "public_key": "-----BEGIN RSA PUBLIC KEY-----\nMIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQC+rDBa+mdM2/T0vuXB7YjCKfyw\nkzt6I5ImBfEQjeU0wuzb5MHVnpiwEWQsnAfEYgSC8IW4gUnpx9MYIFzwZ73UM9v9\nv3MHYQnCcnAbpFkqLlEJy/8k1Ejc9ZAiaL9IsGKzZjQf3E22uqthXsT1z28i+KeE\ntWRUJMocpIUyKN4KBQIDAQAB\n-----END RSA PUBLIC KEY-----\n",
+  "last_build_id": 17567797,
+  "last_build_number": "22",
+  "last_build_status": 0,
+  "last_build_result": 0
+}
