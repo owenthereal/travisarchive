@@ -2,7 +2,9 @@ package main
 
 import (
 	"log"
-	"time"
+	"os"
+	"os/signal"
+	"syscall"
 )
 
 func main() {
@@ -17,15 +19,20 @@ func main() {
 	defer db.Close()
 
 	travis := NewTravis("https://api.travis-ci.org")
-	crawler := NewCrawler(travis, db)
+	crawlers := NewCrawler(travis, db)
 
-	c := time.Tick(10 * time.Second)
-	for _ = range c {
-		log.Printf("crawling for new repos")
-
-		err := crawler.Crawl()
-		if err != nil {
-			log.Fatal(err)
-		}
+	for _, crawler := range crawlers {
+		go crawler.Crawl()
 	}
+
+	c := trapSignal()
+	<-c
+}
+
+func trapSignal() chan os.Signal {
+	c := make(chan os.Signal, 1)
+	signal.Notify(c, os.Interrupt)
+	signal.Notify(c, syscall.SIGTERM)
+
+	return c
 }

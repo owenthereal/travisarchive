@@ -55,7 +55,24 @@ func TestTravis_Repos(t *testing.T) {
 	assert.Equal(t, 25, len(repos))
 
 	repo := repos[0]
-	assert.Equal(t, 1584783, repo.ID)
+	assert.Equal(t, 1584783, repo.Id)
 	assert.Equal(t, "Vayleryn/VaylerynLib", repo.Slug)
-	assert.Equal(t, 17567797, repo.LastBuildID)
+	assert.Equal(t, 17567797, repo.LastBuildId)
+}
+
+func TestTravis_Build(t *testing.T) {
+	server := setupTravisServer()
+	defer server.Close()
+
+	server.HandleFunc("/builds/1", func(w http.ResponseWriter, r *http.Request) {
+		testMethod(t, r, "GET")
+		respondWithJSON(w, loadFixture("build.json"))
+	})
+
+	travis := NewTravis(server.URL)
+	build, _ := travis.Build(1)
+
+	assert.Equal(t, 17567141, build.Id)
+	assert.Equal(t, 1584783, build.RepositoryId)
+	assert.Equal(t, 61, build.Duration)
 }

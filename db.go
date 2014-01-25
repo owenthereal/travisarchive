@@ -41,22 +41,17 @@ func (db *DB) Upsert(name string, q Query, v interface{}) (updated bool, err err
 	return
 }
 
+func (db *DB) EnsureIndexOnField(colName string, fields ...string) error {
+	index := mgo.Index{
+		Key:        fields,
+		Unique:     true,
+		DropDups:   true,
+		Background: true,
+	}
+
+	return db.C(colName).EnsureIndex(index)
+}
+
 func (db *DB) EnsureIndex() error {
-	indexes := []mgo.Index{
-		{
-			Key:        []string{"lastbuildid"},
-			Unique:     true,
-			DropDups:   true,
-			Background: true,
-		},
-	}
-
-	for _, index := range indexes {
-		err := db.C("new_builds").EnsureIndex(index)
-		if err != nil {
-			return err
-		}
-	}
-
-	return nil
+	return db.EnsureIndexOnField("new_builds", "lastbuildid")
 }
