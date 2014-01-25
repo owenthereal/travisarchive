@@ -3,34 +3,36 @@ package main
 import (
 	"fmt"
 	"log"
+	"os"
 	"strings"
 	"time"
 )
-
-func NewCrawler(travis *Travis, db *DB) []Crawler {
-	return []Crawler{
-		&NewBuildCrawler{travis, db},
-		&BuildCrawler{travis, db},
-	}
-}
 
 type Crawler interface {
 	Crawl()
 }
 
+func NewCrawler(travis *Travis, db *DB) []Crawler {
+	return []Crawler{
+		&NewBuildCrawler{travis, db, log.New(os.Stderr, "[NewBuildCrawler] ", log.LstdFlags)},
+		&FinishedBuildCrawler{travis, db, log.New(os.Stderr, "[FinishedBuildCrawler] ", log.LstdFlags)},
+	}
+}
+
 type NewBuildCrawler struct {
 	Travis *Travis
 	DB     *DB
+	Logger *log.Logger
 }
 
 func (c *NewBuildCrawler) Crawl() {
 	ch := time.Tick(10 * time.Second)
 	for _ = range ch {
-		log.Printf("crawling for new builds...")
+		c.Logger.Printf("crawling for new builds...")
 
 		err := c.crawlNewBuilds()
 		if err != nil {
-			log.Fatal(err)
+			c.Logger.Fatalln(err)
 		}
 	}
 }
@@ -53,29 +55,30 @@ func (c *NewBuildCrawler) crawlNewBuilds() (err error) {
 		}
 	}
 
-	log.Printf("harvested %d builds with %d new builds: %s\n", len(repos), len(newBuilds), strings.Join(newBuilds, ", "))
+	c.Logger.Printf("harvested %d builds with %d new builds: %s\n", len(repos), len(newBuilds), strings.Join(newBuilds, ", "))
 
 	return nil
 }
 
-type BuildCrawler struct {
+type FinishedBuildCrawler struct {
 	Travis *Travis
 	DB     *DB
+	Logger *log.Logger
 }
 
-func (c *BuildCrawler) Crawl() {
-	ch := time.Tick(10 * time.Second)
+func (c *FinishedBuildCrawler) Crawl() {
+	ch := time.Tick(60 * time.Second)
 	for _ = range ch {
-		log.Printf("crawling for builds...")
+		c.Logger.Printf("crawling for finsihed builds...")
 
 		err := c.crawlBuilds()
 		if err != nil {
-			log.Fatal(err)
+			c.Logger.Fatalln(err)
 		}
 	}
 }
 
-func (c *BuildCrawler) crawlBuilds() error {
+func (c *FinishedBuildCrawler) crawlBuilds() error {
 	finishedBuilds := []string{}
 
 	var repo Repo
@@ -87,18 +90,15 @@ func (c *BuildCrawler) crawlBuilds() error {
 			return err
 		}
 
-		var (
-			status     string
-			shouldSkip bool
-		)
-		if build.FinishedAt == nil || build.StartedAt == nil {
-			shouldSkip = true
-			status = "skipping"
+		shouldSkip := build.FinishedAt == nil || build.StartedAt == nil
+		var action string
+		if shouldSkip {
+			action = "skipping"
 		} else {
-			status = "updating"
+			action = "updating"
 		}
 
-		log.Printf("fetched build for %s - %d...%s", repo.Slug, repo.LastBuildId, status)
+		c.Logger.Printf("%s build: %s - %d", action, repo.Slug, repo.LastBuildId)
 
 		if shouldSkip {
 			continue
@@ -124,10 +124,14 @@ func (c *BuildCrawler) crawlBuilds() error {
 		}
 	}
 
-	log.Printf("inserted %d builds: %s\n", len(finishedBuilds), strings.Join(finishedBuilds, ", "))
+	c.Logger.Printf("harvested %d finsihed builds: %s\n", len(finishedBuilds), strings.Join(finishedBuilds, ", "))
 
+	return c.ensureColIndexes(colNames)
+}
+
+func (c *FinishedBuildCrawler) ensureColIndexes(colNames map[string]string) error {
 	for _, colName := range colNames {
-		log.Printf("ensuring index for collection %s\n", colName)
+		c.Logger.Printf("ensuring index for collection %s\n", colName)
 		err := c.DB.EnsureIndexOnField(colName, "id")
 		if err != nil {
 			return err
@@ -138,7 +142,6 @@ func (c *BuildCrawler) crawlBuilds() error {
 }
 
 func buildColName(date *time.Time) string {
-	buildDate := date.Format("2006-01-02")
-	buildDate = strings.Replace(buildDate, "-", "_", -1)
+	buildDate := date.UTC().Format("2006_01_02")
 	return fmt.Sprintf("builds_%s", buildDate)
 }
