@@ -28,11 +28,11 @@ type NewBuildCrawler struct {
 func (c *NewBuildCrawler) Crawl() {
 	ch := time.Tick(10 * time.Second)
 	for _ = range ch {
-		c.Logger.Printf("crawling for new builds...")
+		c.Logger.Printf("crawling for new builds...\n")
 
 		err := c.crawlNewBuilds()
 		if err != nil {
-			c.Logger.Fatalln(err)
+			c.Logger.Println(err)
 		}
 	}
 }
@@ -67,13 +67,13 @@ type FinishedBuildCrawler struct {
 }
 
 func (c *FinishedBuildCrawler) Crawl() {
-	ch := time.Tick(60 * time.Second)
+	ch := time.Tick(1 * time.Minute)
 	for _ = range ch {
-		c.Logger.Printf("crawling for finsihed builds...")
+		c.Logger.Printf("crawling for finsihed builds...\n")
 
 		err := c.crawlBuilds()
 		if err != nil {
-			c.Logger.Fatalln(err)
+			c.Logger.Println(err)
 		}
 	}
 }
@@ -98,7 +98,7 @@ func (c *FinishedBuildCrawler) crawlBuilds() error {
 			action = "updating"
 		}
 
-		c.Logger.Printf("%s build: %s - %d", action, repo.Slug, repo.LastBuildId)
+		c.Logger.Printf("%s build: %s - %d\n", action, repo.Slug, repo.LastBuildId)
 
 		if shouldSkip {
 			continue
