@@ -28,26 +28,24 @@ type NewBuildCrawler struct {
 func (c *NewBuildCrawler) Crawl() {
 	ch := time.Tick(10 * time.Second)
 	for _ = range ch {
-		c.Logger.Printf("crawling for new builds...\n")
-
-		err := c.crawlNewBuilds()
-		if err != nil {
-			c.Logger.Println(err)
-		}
+		c.Logger.Println("crawling for new builds...")
+		c.crawlNewBuilds()
 	}
 }
 
-func (c *NewBuildCrawler) crawlNewBuilds() (err error) {
+func (c *NewBuildCrawler) crawlNewBuilds() {
 	repos, err := c.Travis.Repos()
 	if err != nil {
-		return err
+		c.Logger.Println(err)
+		return
 	}
 
 	newBuilds := []string{}
 	for _, repo := range repos {
 		updated, err := c.DB.Upsert("new_builds", Query{"lastbuildid": repo.LastBuildId}, repo)
 		if err != nil {
-			return err
+			c.Logger.Println(err)
+			continue
 		}
 
 		if updated {
@@ -56,8 +54,6 @@ func (c *NewBuildCrawler) crawlNewBuilds() (err error) {
 	}
 
 	c.Logger.Printf("harvested %d builds with %d new builds: %s\n", len(repos), len(newBuilds), strings.Join(newBuilds, ", "))
-
-	return nil
 }
 
 type FinishedBuildCrawler struct {
@@ -67,72 +63,89 @@ type FinishedBuildCrawler struct {
 }
 
 func (c *FinishedBuildCrawler) Crawl() {
-	ch := time.Tick(1 * time.Minute)
+	ch := time.Tick(30 * time.Second)
 	for _ = range ch {
-		c.Logger.Printf("crawling for finsihed builds...\n")
-
-		err := c.crawlBuilds()
-		if err != nil {
-			c.Logger.Println(err)
-		}
+		c.Logger.Println("crawling for finsihed builds...")
+		c.crawlFinishedBuilds()
 	}
 }
 
-func (c *FinishedBuildCrawler) crawlBuilds() error {
-	finishedBuilds := []string{}
+func (c *FinishedBuildCrawler) crawlFinishedBuilds() {
+	colNames, finishedBuilds := c.doCrawlFinishedBuilds()
+	c.Logger.Printf("harvested %d finsihed builds: %s\n", len(finishedBuilds), strings.Join(finishedBuilds, ", "))
 
-	var repo Repo
-	colNames := make(map[string]string)
+	err := c.ensureColIndexes(colNames)
+	if err != nil {
+		c.Logger.Println(err)
+	}
+}
+
+func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]string, finishedBuilds []string) {
+	colNames = make(map[string]string)
+
+	var repo *Repo
+
 	iter := c.DB.C("new_builds").Find(nil).Iter()
 	for iter.Next(&repo) {
-		build, err := c.Travis.Build(repo.LastBuildId)
+		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
-			return err
-		}
-
-		shouldSkip := build.FinishedAt == nil || build.StartedAt == nil
-		var action string
-		if shouldSkip {
-			action = "skipping"
-		} else {
-			action = "updating"
-		}
-
-		c.Logger.Printf("%s build: %s - %d\n", action, repo.Slug, repo.LastBuildId)
-
-		if shouldSkip {
+			c.Logger.Println(err)
 			continue
 		}
 
-		build.Repository = &repo
+		colName, updated, err := c.upsertBuild(build)
+		if err != nil {
+			c.Logger.Println(err)
+			continue
+		}
 
-		colName := buildColName(build.StartedAt)
 		colNames[colName] = colName
-
-		updated, err := c.DB.Upsert(colName, Query{"id": build.Id}, build)
-		if err != nil {
-			return err
-		}
-
-		err = c.DB.C("new_builds").Remove(Query{"lastbuildid": repo.LastBuildId})
-		if err != nil {
-			return err
-		}
 
 		if updated {
 			finishedBuilds = append(finishedBuilds, repo.Slug)
 		}
 	}
 
-	c.Logger.Printf("harvested %d finsihed builds: %s\n", len(finishedBuilds), strings.Join(finishedBuilds, ", "))
+	return
+}
 
-	return c.ensureColIndexes(colNames)
+func (c *FinishedBuildCrawler) crawlFinsihedBuild(repo *Repo) (build *Build, err error) {
+	build, err = c.Travis.Build(repo.LastBuildId)
+	if err != nil {
+		return
+	}
+
+	isFinished := !(build.FinishedAt == nil || build.StartedAt == nil)
+	if !isFinished {
+		err = fmt.Errorf("skipping build: %s - %d\n", repo.Slug, repo.LastBuildId)
+		return
+	}
+
+	build.Repository = repo
+
+	return
+}
+
+func (c *FinishedBuildCrawler) upsertBuild(build *Build) (colName string, updated bool, err error) {
+	colName = buildColName(build.StartedAt)
+
+	updated, err = c.DB.Upsert(colName, Query{"id": build.Id}, build)
+	if err != nil {
+		return
+	}
+
+	err = c.DB.C("new_builds").Remove(Query{"lastbuildid": build.Repository.LastBuildId})
+	if err != nil {
+		return
+	}
+
+	return
 }
 
 func (c *FinishedBuildCrawler) ensureColIndexes(colNames map[string]string) error {
 	for _, colName := range colNames {
 		c.Logger.Printf("ensuring index for collection %s\n", colName)
-		err := c.DB.EnsureIndexOnField(colName, "id")
+		err := c.DB.EnsureIndexKey(colName, "id")
 		if err != nil {
 			return err
 		}

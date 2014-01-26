@@ -8,11 +8,11 @@ import (
 )
 
 func main() {
-	db, err := NewDB("mongodb://localhost/travisarchive")
-	if err != nil {
-		log.Fatal(err)
+	dbHost := os.Getenv("MONGO_URL")
+	if dbHost == "" {
+		dbHost = "mongodb://localhost/travisarchive"
 	}
-	err = db.EnsureIndex()
+	db, err := NewDB(dbHost)
 	if err != nil {
 		log.Fatal(err)
 	}

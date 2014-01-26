@@ -14,8 +14,10 @@ func NewDB(host string) (*DB, error) {
 	}
 
 	session.SetMode(mgo.Monotonic, true)
+	db := &DB{session: session}
+	err = db.ensureDefaultIndex()
 
-	return &DB{session: session}, nil
+	return db, err
 }
 
 type DB struct {
@@ -41,17 +43,24 @@ func (db *DB) Upsert(name string, q Query, v interface{}) (updated bool, err err
 	return
 }
 
-func (db *DB) EnsureIndexOnField(colName string, fields ...string) error {
-	index := mgo.Index{
-		Key:        fields,
-		Unique:     true,
-		DropDups:   true,
-		Background: true,
+func (db *DB) EnsureIndexKey(colName string, keys ...string) error {
+	for _, key := range keys {
+		index := mgo.Index{
+			Key:        []string{key},
+			Unique:     true,
+			DropDups:   true,
+			Background: true,
+		}
+
+		err := db.C(colName).EnsureIndex(index)
+		if err != nil {
+			return err
+		}
 	}
 
-	return db.C(colName).EnsureIndex(index)
+	return nil
 }
 
-func (db *DB) EnsureIndex() error {
-	return db.EnsureIndexOnField("new_builds", "lastbuildid")
+func (db *DB) ensureDefaultIndex() error {
+	return db.EnsureIndexKey("new_builds", "lastbuildid")
 }
