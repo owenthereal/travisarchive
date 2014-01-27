@@ -1,1 +1,1 @@
-crawler: ./travisarchive
+worker: ./travisarchive
