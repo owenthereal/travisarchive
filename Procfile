@@ -1,1 +1,1 @@
-worker: ./travisarchive
+worker: travisarchive
