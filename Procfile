@@ -1,1 +1,1 @@
-web: ./travisarchive
+web: ./bin/travisarchive
