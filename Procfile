@@ -1,1 +1,1 @@
-crawler: ./bin/travisarchive
+web: ./bin/travisarchive
