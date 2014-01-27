@@ -1,1 +1,1 @@
-worker: ./bin/travisarchive
+worker: ./bin/crawler
