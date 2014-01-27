@@ -8,6 +8,11 @@ import (
 	"time"
 )
 
+var (
+	newBuildCrawlerInterval      = 10 * time.Second
+	finishedBuildCrawlerInterval = 2 * time.Minute
+)
+
 type Crawler interface {
 	Crawl()
 }
@@ -26,7 +31,7 @@ type NewBuildCrawler struct {
 }
 
 func (c *NewBuildCrawler) Crawl() {
-	ch := time.Tick(10 * time.Second)
+	ch := time.Tick(newBuildCrawlerInterval)
 	for _ = range ch {
 		c.Logger.Println("crawling for new builds...")
 		c.crawlNewBuilds()
@@ -63,7 +68,7 @@ type FinishedBuildCrawler struct {
 }
 
 func (c *FinishedBuildCrawler) Crawl() {
-	ch := time.Tick(1 * time.Minute)
+	ch := time.Tick(finishedBuildCrawlerInterval)
 	for _ = range ch {
 		c.Logger.Println("crawling for finsihed builds...")
 		c.crawlFinishedBuilds()
