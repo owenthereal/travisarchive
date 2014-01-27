@@ -8,7 +8,7 @@ import (
 )
 
 func main() {
-	dbHost := os.Getenv("MONGO_URL")
+	dbHost := os.Getenv("MONGOHQ_URL")
 	if dbHost == "" {
 		dbHost = "mongodb://localhost/travisarchive"
 	}
