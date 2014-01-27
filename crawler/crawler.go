@@ -63,7 +63,7 @@ type FinishedBuildCrawler struct {
 }
 
 func (c *FinishedBuildCrawler) Crawl() {
-	ch := time.Tick(30 * time.Second)
+	ch := time.Tick(60 * time.Second)
 	for _ = range ch {
 		c.Logger.Println("crawling for finsihed builds...")
 		c.crawlFinishedBuilds()
