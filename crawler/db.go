@@ -47,6 +47,22 @@ func (db *DB) EnsureIndexKey(colName string, keys ...string) error {
 	for _, key := range keys {
 		index := mgo.Index{
 			Key:        []string{key},
+			Background: true,
+		}
+
+		err := db.C(colName).EnsureIndex(index)
+		if err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (db *DB) EnsureUniqueIndexKey(colName string, keys ...string) error {
+	for _, key := range keys {
+		index := mgo.Index{
+			Key:        []string{key},
 			Unique:     true,
 			DropDups:   true,
 			Background: true,
