@@ -85,7 +85,7 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 
 	var repo *Repo
 
-	iter := c.DB.C("new_builds").Find(nil).Sort("-finishedat").Iter()
+	iter := c.DB.C("new_builds").Find(nil).Sort("-lastbuildstartedat").Iter()
 	for iter.Next(&repo) {
 		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
@@ -146,10 +146,6 @@ func (c *FinishedBuildCrawler) ensureColIndexes(colNames map[string]string) erro
 	for _, colName := range colNames {
 		c.Logger.Printf("ensuring index for collection %s\n", colName)
 		err := c.DB.EnsureUniqueIndexKey(colName, "id")
-		if err != nil {
-			return err
-		}
-		err = c.DB.EnsureUniqueIndexKey(colName, "finishedat")
 		if err != nil {
 			return err
 		}

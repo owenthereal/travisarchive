@@ -78,5 +78,10 @@ func (db *DB) EnsureUniqueIndexKey(colName string, keys ...string) error {
 }
 
 func (db *DB) ensureDefaultIndex() error {
-	return db.EnsureIndexKey("new_builds", "lastbuildid")
+	err := db.EnsureUniqueIndexKey("new_builds", "lastbuildid")
+	if err != nil {
+		return err
+	}
+
+	return db.EnsureIndexKey("new_builds", "lastbuildstartedat")
 }
