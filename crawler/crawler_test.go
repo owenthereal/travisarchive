@@ -14,3 +14,10 @@ func TestCrawler_buildColName(t *testing.T) {
 
 	assert.Equal(t, name, "builds_2013_02_04")
 }
+
+func TestCrawler_oneMinuteAgo(t *testing.T) {
+	tt := oneMinuteAgo()
+	now := time.Now()
+
+	assert.T(t, now.After(tt))
+}

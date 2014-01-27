@@ -63,7 +63,7 @@ type FinishedBuildCrawler struct {
 }
 
 func (c *FinishedBuildCrawler) Crawl() {
-	ch := time.Tick(60 * time.Second)
+	ch := time.Tick(1 * time.Minute)
 	for _ = range ch {
 		c.Logger.Println("crawling for finsihed builds...")
 		c.crawlFinishedBuilds()
@@ -71,8 +71,8 @@ func (c *FinishedBuildCrawler) Crawl() {
 }
 
 func (c *FinishedBuildCrawler) crawlFinishedBuilds() {
-	colNames, finishedBuilds := c.doCrawlFinishedBuilds()
-	c.Logger.Printf("harvested %d finsihed builds: %s\n", len(finishedBuilds), strings.Join(finishedBuilds, ", "))
+	colNames, finishedBuilds, skippedBuilds := c.doCrawlFinishedBuilds()
+	c.Logger.Printf("fetched %d builds with %d finsihed and %d skipped. Finsihed builds: %s\n", len(finishedBuilds)+len(skippedBuilds), len(finishedBuilds), len(skippedBuilds), strings.Join(finishedBuilds, ", "))
 
 	err := c.ensureColIndexes(colNames)
 	if err != nil {
@@ -80,16 +80,20 @@ func (c *FinishedBuildCrawler) crawlFinishedBuilds() {
 	}
 }
 
-func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]string, finishedBuilds []string) {
+func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]string, finishedBuilds []string, skippedBuilds []string) {
 	colNames = make(map[string]string)
 
-	var repo *Repo
-
-	iter := c.DB.C("new_builds").Find(nil).Sort("-lastbuildstartedat").Iter()
+	var (
+		repo  *Repo
+		query Query
+	)
+	//query = Query{"lastbuildstartedat": Query{"$gte": oneMinuteAgo()}}
+	iter := c.DB.C("new_builds").Find(query).Sort("-lastbuildstartedat").Iter()
 	for iter.Next(&repo) {
 		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
 			c.Logger.Println(err)
+			skippedBuilds = append(skippedBuilds, repo.Slug)
 			continue
 		}
 
@@ -157,4 +161,9 @@ func (c *FinishedBuildCrawler) ensureColIndexes(colNames map[string]string) erro
 func buildColName(date *time.Time) string {
 	buildDate := date.UTC().Format("2006_01_02")
 	return fmt.Sprintf("builds_%s", buildDate)
+}
+
+func oneMinuteAgo() time.Time {
+	now := time.Now()
+	return now.Add(-1 * time.Minute).UTC()
 }
