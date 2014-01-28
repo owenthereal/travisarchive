@@ -5,6 +5,8 @@ import (
 	"os"
 	"os/signal"
 	"syscall"
+
+	"github.com/jingweno/travisarchive/db"
 )
 
 func main() {
@@ -12,7 +14,7 @@ func main() {
 	if dbHost == "" {
 		dbHost = "mongodb://localhost/travisarchive"
 	}
-	db, err := NewDB(dbHost)
+	db, err := db.NewDB(dbHost)
 	if err != nil {
 		log.Fatal(err)
 	}

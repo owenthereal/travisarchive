@@ -6,6 +6,8 @@ import (
 	"os"
 	"strings"
 	"time"
+
+	"github.com/jingweno/travisarchive/db"
 )
 
 var (
@@ -17,7 +19,7 @@ type Crawler interface {
 	Crawl()
 }
 
-func NewCrawler(travis *Travis, db *DB) []Crawler {
+func NewCrawler(travis *Travis, db *db.DB) []Crawler {
 	return []Crawler{
 		&NewBuildCrawler{travis, db, log.New(os.Stderr, "[NewBuildCrawler] ", log.LstdFlags)},
 		&FinishedBuildCrawler{travis, db, log.New(os.Stderr, "[FinishedBuildCrawler] ", log.LstdFlags)},
@@ -26,7 +28,7 @@ func NewCrawler(travis *Travis, db *DB) []Crawler {
 
 type NewBuildCrawler struct {
 	Travis *Travis
-	DB     *DB
+	DB     *db.DB
 	Logger *log.Logger
 }
 
@@ -47,7 +49,7 @@ func (c *NewBuildCrawler) crawlNewBuilds() {
 
 	newBuilds := []string{}
 	for _, repo := range repos {
-		updated, err := c.DB.Upsert("new_builds", Query{"lastbuildid": repo.LastBuildId}, repo)
+		updated, err := c.DB.Upsert("new_builds", db.Query{"lastbuildid": repo.LastBuildId}, repo)
 		if err != nil {
 			c.Logger.Println(err)
 			continue
@@ -63,7 +65,7 @@ func (c *NewBuildCrawler) crawlNewBuilds() {
 
 type FinishedBuildCrawler struct {
 	Travis *Travis
-	DB     *DB
+	DB     *db.DB
 	Logger *log.Logger
 }
 
@@ -90,7 +92,7 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 
 	var (
 		repo  *Repo
-		query Query
+		query db.Query
 	)
 	//query = Query{"lastbuildstartedat": Query{"$gte": oneMinuteAgo()}}
 	iter := c.DB.C("new_builds").Find(query).Sort("-lastbuildstartedat").Iter()
@@ -138,12 +140,12 @@ func (c *FinishedBuildCrawler) crawlFinsihedBuild(repo *Repo) (build *Build, err
 func (c *FinishedBuildCrawler) upsertBuild(build *Build) (colName string, updated bool, err error) {
 	colName = buildColName(build.StartedAt)
 
-	updated, err = c.DB.Upsert(colName, Query{"id": build.Id}, build)
+	updated, err = c.DB.Upsert(colName, db.Query{"id": build.Id}, build)
 	if err != nil {
 		return
 	}
 
-	err = c.DB.C("new_builds").Remove(Query{"lastbuildid": build.Repository.LastBuildId})
+	err = c.DB.C("new_builds").Remove(db.Query{"lastbuildid": build.Repository.LastBuildId})
 	if err != nil {
 		return
 	}
