@@ -95,7 +95,7 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 		//query db.Query
 	)
 	//query = Query{"lastbuildstartedat": Query{"$gte": oneMinuteAgo()}}
-	iter := c.DB.C("new_builds").Find(nil).Sort("-lastbuildstartedat").Iter()
+	iter := c.DB.C("new_builds").Find(nil).Sort("lastbuildstartedat").Iter()
 	for iter.Next(&repo) {
 		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
@@ -130,7 +130,7 @@ func (c *FinishedBuildCrawler) crawlFinsihedBuild(repo *Repo) (build *Build, err
 		return
 	}
 
-	isFinished := !(build.FinishedAt == nil || build.StartedAt == nil)
+	isFinished := build.FinishedAt != nil && build.StartedAt != nil
 	if !isFinished {
 		err = fmt.Errorf("skipping build: %s - %d\n", repo.Slug, repo.LastBuildId)
 		return
