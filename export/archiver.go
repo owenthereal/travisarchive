@@ -14,7 +14,7 @@ type Archiver struct {
 }
 
 func (a *Archiver) Archive() (out string, err error) {
-	out = strings.TrimSuffix(a.File, filepath.Ext(a.File)) + ".zip"
+	out = fmt.Sprintf("%s.zip", strings.TrimSuffix(a.File, filepath.Ext(a.File)))
 	file, err := os.OpenFile(out, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return

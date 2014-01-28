@@ -71,11 +71,16 @@ func (e *MongoExport) buildArgs(uu *url.URL, outfile string) (results []string) 
 	}
 	results = append(results, "-h", host)
 
+	user := uu.User
+	if user != nil {
+		pass, _ := user.Password()
+		results = append(results, "-u", uu.User.Username())
+		results = append(results, "-p", pass)
+	}
+
 	db := strings.TrimPrefix(uu.Path, "/")
-	pass, _ := uu.User.Password()
 	results = append(results, "-d", db)
-	results = append(results, "-u", uu.User.Username())
-	results = append(results, "-p", pass)
+
 	results = append(results, "-c", e.ColName)
 	results = append(results, "--out", outfile)
 
