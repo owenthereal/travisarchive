@@ -66,6 +66,15 @@ func exportBuilds(cols []string) {
 		}
 
 		fmt.Printf("exported %s to %s\n", col, outfile)
+
+		archiver := &Archiver{outfile}
+		out, err := archiver.Archive()
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		fmt.Printf("archived to %s", out)
 	}
 }
 
