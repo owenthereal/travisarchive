@@ -7,7 +7,18 @@ import (
 	"syscall"
 
 	"github.com/jingweno/travisarchive/db"
+	"github.com/joho/godotenv"
 )
+
+var stathat *Stathat
+
+func init() {
+	godotenv.Load("../.env")
+	stathat = &Stathat{
+		StatName: os.Getenv("STATHAT_STAT_NAME"),
+		Ezkey:    os.Getenv("STATHAT_EZKEY"),
+	}
+}
 
 func main() {
 	db, err := db.Connect()

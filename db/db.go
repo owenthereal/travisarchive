@@ -11,10 +11,6 @@ type Query bson.M
 
 func Connect() (*DB, error) {
 	dbHost := os.Getenv("MONGOHQ_URL")
-	if dbHost == "" {
-		dbHost = "mongodb://localhost/travisarchive"
-	}
-
 	return New(dbHost)
 }
 

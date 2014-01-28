@@ -57,6 +57,10 @@ func (c *NewBuildCrawler) crawlNewBuilds() {
 
 		if updated {
 			newBuilds = append(newBuilds, repo.Slug)
+			err := stathat.CountOne(repo.LastBuildStartedAt)
+			if err != nil {
+				c.Logger.Println(err)
+			}
 		}
 	}
 
