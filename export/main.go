@@ -20,11 +20,7 @@ var (
 )
 
 func init() {
-	err := godotenv.Load("../.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
+	godotenv.Load("../.env")
 	flag.StringVar(&execDir, "e", "", "dir to the mongoexport executable")
 	flag.StringVar(&mongoURL, "u", os.Getenv("MONGOHQ_URL"), "URL of the Mongo server")
 }
