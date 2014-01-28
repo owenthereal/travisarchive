@@ -1,12 +1,39 @@
 package main
 
 import (
+	"flag"
 	"fmt"
-	"runtime"
+	"log"
+	"os"
 )
 
+var (
+	execDir  string
+	mongoURL string
+)
+
+func init() {
+	flag.StringVar(&execDir, "e", "", "dir to the mongoexport executable")
+	flag.StringVar(&mongoURL, "u", os.Getenv("MONGOHQ_URL"), "URL of the Mongo server")
+}
+
 func main() {
-	// mongoexport -c new_builds -h zach.mongohq.com --port 10081 -d travisarchive -u travisarchive -p ILoveOwen1028 --out foo.json
-	fmt.Println(runtime.GOOS)
-	fmt.Println(runtime.GOARCH)
+	flag.Parse()
+
+	if execDir == "" {
+		log.Fatal(fmt.Errorf("specify the dir to the mongoexport executable with -e"))
+	}
+
+	if mongoURL == "" {
+		log.Fatal(fmt.Errorf("specify the URL of Mongo server with -u"))
+	}
+
+	col := "builds_2014_01_27"
+	cmd := &MongoExport{ExecDir: execDir, URL: mongoURL, ColName: col}
+	outfile, err := cmd.Run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	fmt.Printf("exported collection %s to %s\n", col, outfile)
 }
