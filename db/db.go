@@ -1,13 +1,24 @@
 package db
 
 import (
+	"os"
+
 	"labix.org/v2/mgo"
 	"labix.org/v2/mgo/bson"
 )
 
 type Query bson.M
 
-func NewDB(host string) (*DB, error) {
+func Connect() (*DB, error) {
+	dbHost := os.Getenv("MONGOHQ_URL")
+	if dbHost == "" {
+		dbHost = "mongodb://localhost/travisarchive"
+	}
+
+	return New(dbHost)
+}
+
+func New(host string) (*DB, error) {
 	session, err := mgo.Dial(host)
 	if err != nil {
 		return nil, err

@@ -10,11 +10,7 @@ import (
 )
 
 func main() {
-	dbHost := os.Getenv("MONGOHQ_URL")
-	if dbHost == "" {
-		dbHost = "mongodb://localhost/travisarchive"
-	}
-	db, err := db.NewDB(dbHost)
+	db, err := db.Connect()
 	if err != nil {
 		log.Fatal(err)
 	}
