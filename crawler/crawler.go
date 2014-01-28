@@ -117,6 +117,10 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 		}
 	}
 
+	if err := iter.Close(); err != nil {
+		c.Logger.Println(err)
+	}
+
 	return
 }
 
