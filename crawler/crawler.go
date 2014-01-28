@@ -91,11 +91,11 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 	colNames = make(map[string]string)
 
 	var (
-		repo  *Repo
-		query db.Query
+		repo *Repo
+		//query db.Query
 	)
 	//query = Query{"lastbuildstartedat": Query{"$gte": oneMinuteAgo()}}
-	iter := c.DB.C("new_builds").Find(query).Sort("-lastbuildstartedat").Iter()
+	iter := c.DB.C("new_builds").Find(nil).Sort("-lastbuildstartedat").Iter()
 	for iter.Next(&repo) {
 		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
