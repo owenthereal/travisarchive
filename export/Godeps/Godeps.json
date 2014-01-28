@@ -1,5 +1,5 @@
 {
-	"ImportPath": "github.com/jingweno/travisarchive",
+	"ImportPath": "github.com/jingweno/travisarchive/export",
 	"GoVersion": "go1.2",
 	"Packages": [
 		"./..."
