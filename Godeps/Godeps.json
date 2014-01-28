@@ -24,6 +24,10 @@
 			"Rev": "6807e777504f54ad073ecef66747de158294b639"
 		},
 		{
+			"ImportPath": "github.com/stathat/go",
+			"Rev": "01d012b9ee2ecc107cb28b6dd32d9019ed5c1d77"
+		},
+		{
 			"ImportPath": "labix.org/v2/mgo",
 			"Comment": "263",
 			"Rev": "gustavo@niemeyer.net-20140126000127-qe9fwt48ceby11ts"
