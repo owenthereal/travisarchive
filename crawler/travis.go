@@ -52,6 +52,8 @@ func (t *Travis) do(verb, url string, input interface{}, output interface{}) (er
 		return
 	}
 
+	req.Header.Add("User-Agent", "travisarchive")
+
 	resp, err := t.Client.Do(req)
 	if err != nil {
 		return
