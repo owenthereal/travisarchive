@@ -10,6 +10,10 @@ import (
 	"time"
 )
 
+const (
+	agentParam = "agent=travisarchive"
+)
+
 func NewTravis(host string) *Travis {
 	return &Travis{Host: host, Client: &http.Client{}}
 }
@@ -20,14 +24,14 @@ type Travis struct {
 }
 
 func (t *Travis) Repos() (repos []Repo, err error) {
-	url := fmt.Sprintf("%s/repos", t.Host)
+	url := fmt.Sprintf("%s/repos?%s", t.Host, agentParam)
 	err = t.get(url, &repos)
 
 	return
 }
 
 func (t *Travis) Build(id int) (build *Build, err error) {
-	url := fmt.Sprintf("%s/builds/%d", t.Host, id)
+	url := fmt.Sprintf("%s/builds/%d?%s", t.Host, id, agentParam)
 	err = t.get(url, &build)
 	return
 }
