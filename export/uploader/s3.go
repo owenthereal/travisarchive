@@ -3,6 +3,7 @@ package uploader
 import (
 	"fmt"
 	"os"
+
 	"launchpad.net/goamz/aws"
 	"launchpad.net/goamz/s3"
 )
@@ -32,7 +33,7 @@ func (s3Uploader *S3) Init() error {
 }
 
 func (s3Uploader *S3) Upload(destPath, contentType string, f *os.File) error {
-	writer, err := s3Uploader.Bucket.InitMulti(destPath, contentType, s3.AuthenticatedRead)
+	writer, err := s3Uploader.Bucket.InitMulti(destPath, contentType, s3.PublicRead)
 	if err != nil {
 		return err
 	}
