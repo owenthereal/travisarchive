@@ -10,7 +10,7 @@ import (
 type Query bson.M
 
 func Connect() (*DB, error) {
-	dbHost := os.Getenv("MONGOHQ_URL")
+	dbHost := os.Getenv("MONGO_URL")
 	return New(dbHost)
 }
 
