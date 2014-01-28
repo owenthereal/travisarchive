@@ -5,10 +5,13 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"path/filepath"
 	"strings"
 	"time"
 
 	"github.com/jingweno/travisarchive/db"
+	"github.com/jingweno/travisarchive/export/uploader"
+	"github.com/joho/godotenv"
 )
 
 var (
@@ -17,6 +20,11 @@ var (
 )
 
 func init() {
+	err := godotenv.Load("../.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
 	flag.StringVar(&execDir, "e", "", "dir to the mongoexport executable")
 	flag.StringVar(&mongoURL, "u", os.Getenv("MONGOHQ_URL"), "URL of the Mongo server")
 }
@@ -57,7 +65,7 @@ func exportBuilds(cols []string) {
 			continue
 		}
 
-		fmt.Printf("exporting %s...\n", col)
+		log.Printf("exporting %s...\n", col)
 		cmd := &MongoExport{ExecDir: execDir, URL: mongoURL, ColName: col}
 		outfile, err := cmd.Run()
 		if err != nil {
@@ -65,16 +73,37 @@ func exportBuilds(cols []string) {
 			continue
 		}
 
-		fmt.Printf("exported %s to %s\n", col, outfile)
+		log.Printf("exported to %s\n", outfile)
 
 		archiver := &Archiver{outfile}
-		out, err := archiver.Archive()
+		outzip, err := archiver.Archive()
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		fmt.Printf("archived to %s", out)
+		log.Printf("archived to %s\n", outzip)
+
+		zipfile, err := os.Open(outzip)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		defer zipfile.Close()
+
+		filename := fmt.Sprintf("/builds/%s", filepath.Base(outzip))
+		u, err := uploader.New("s3")
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+		err = u.Upload(filename, "application/zip", zipfile)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
+
+		log.Printf("uploaded to s3 %s", filename)
 	}
 }
 
