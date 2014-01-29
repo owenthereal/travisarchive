@@ -1,6 +1,7 @@
 package main
 
 import (
+	"log"
 	"net/http"
 	"os"
 
@@ -13,10 +14,12 @@ func init() {
 }
 
 func main() {
-	port := ":" + os.Getenv("PORT")
+	port := os.Getenv("PORT")
 	m := martini.Classic()
 	m.Use(martini.Static("public"))
-	err := http.ListenAndServe(port, m)
+
+	log.Printf("starting server at %s", port)
+	err := http.ListenAndServe(":"+port, m)
 	if err != nil {
 		panic(err)
 	}
