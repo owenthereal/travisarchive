@@ -1,2 +1,2 @@
-web: ./bin/web
-worker: ./bin/crawler
+web: cd bin && ./web
+worker: cd bin && ./crawler
