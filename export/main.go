@@ -22,7 +22,7 @@ var (
 func init() {
 	godotenv.Load("../.env")
 	flag.StringVar(&execDir, "e", "", "dir to the mongoexport executable")
-	flag.StringVar(&mongoURL, "u", os.Getenv("MONGOHQ_URL"), "URL of the Mongo server")
+	flag.StringVar(&mongoURL, "u", os.Getenv("MONGO_URL"), "URL of the Mongo server")
 }
 
 func main() {
