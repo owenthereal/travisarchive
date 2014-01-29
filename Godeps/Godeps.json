@@ -11,6 +11,15 @@
 			"Rev": "e17e99893cb6509f428e1728281c2ad60a6b31e3"
 		},
 		{
+			"ImportPath": "github.com/codegangsta/inject",
+			"Rev": "346a984957aa24276ebc5e7b16b3ac6a50fe8138"
+		},
+		{
+			"ImportPath": "github.com/codegangsta/martini",
+			"Comment": "v0.1-72-g9eab46a",
+			"Rev": "9eab46a1e15cdc0c9644b0505ffbd2ca905ab997"
+		},
+		{
 			"ImportPath": "github.com/joho/godotenv",
 			"Rev": "3505098f907089729105e928aebea45f0a643f20"
 		},
