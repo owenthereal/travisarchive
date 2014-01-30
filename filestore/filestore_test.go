@@ -1,4 +1,4 @@
-package uploader
+package filestore
 
 import (
 	"io/ioutil"
@@ -8,18 +8,18 @@ import (
 	"github.com/bmizerany/assert"
 )
 
-func TestLocalUploader_Upload(t *testing.T) {
-	destDir, _ := ioutil.TempDir("", "uploader")
+func TestLocal_Upload(t *testing.T) {
+	destDir, _ := ioutil.TempDir("", "localfs")
 	dest := filepath.Join(destDir, "test")
 
-	f, err := ioutil.TempFile("", "uploader")
+	f, err := ioutil.TempFile("", "localfs")
 	assert.Equal(t, nil, err)
 
 	err = ioutil.WriteFile(f.Name(), []byte("string"), 0644)
 	assert.Equal(t, nil, err)
 
-	uploader := Local{}
-	err = uploader.Upload(dest, "application/json", f)
+	fs := Local{}
+	err = fs.Upload(dest, "application/json", f)
 	assert.Equal(t, nil, err)
 
 	c, err := ioutil.ReadFile(dest)

@@ -1,0 +1,32 @@
+<div class="jumbotron">
+  <script src="http://www.stathat.com/javascripts/embed.js"></script>
+  <script>StatHatEmbed.render({s1: 'Gb3b', w: 660, h: 205, tf: 'day_compare', style: 'fill', title: 'Travis Builds'});</script>
+</div>
+
+<div class="row">
+  <div class="col-lg-12">
+    <p style="font-size:20px;font-weight:200;line-height:27px;">
+      Travis CI builds open source projects on GitHub for the open source community.
+      Travis Archive is a project to <strong>archive</strong> build results of open source projects and <strong>make it easily accessible</strong> for further analysis.
+    </p>
+  </div>
+</div>
+
+<hr/>
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Date</th>
+      <th>Archive</th>
+    </tr>
+  </thead>
+  <tbody>
+    {{range .}}
+      <tr>
+        <td>{{.FormattedTime}}</td>
+        <td><a href="{{.URI}}">{{.URI}}</a></td>
+      </tr>
+    {{end}}
+  </tbody>
+</table>

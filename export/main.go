@@ -6,11 +6,11 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"strings"
 	"time"
 
 	"github.com/jingweno/travisarchive/db"
-	"github.com/jingweno/travisarchive/export/uploader"
+	"github.com/jingweno/travisarchive/filestore"
+	"github.com/jingweno/travisarchive/util"
 	"github.com/joho/godotenv"
 )
 
@@ -52,7 +52,7 @@ func main() {
 func exportBuilds(cols []string) {
 	oneDayAgo := time.Now().Add(-24 * time.Hour).UTC()
 	for _, col := range cols {
-		d, err := parseDate(col)
+		d, err := util.ParseBuildTime(col)
 		if err != nil {
 			continue
 		}
@@ -88,12 +88,12 @@ func exportBuilds(cols []string) {
 		defer zipfile.Close()
 
 		filename := fmt.Sprintf("/builds/%s", filepath.Base(outzip))
-		u, err := uploader.New("s3")
+		ds, err := filestore.New("s3")
 		if err != nil {
 			log.Println(err)
 			continue
 		}
-		err = u.Upload(filename, "application/zip", zipfile)
+		err = ds.Upload(filename, "application/zip", zipfile)
 		if err != nil {
 			log.Println(err)
 			continue
@@ -101,15 +101,4 @@ func exportBuilds(cols []string) {
 
 		log.Printf("uploaded to s3 %s", filename)
 	}
-}
-
-func parseDate(col string) (time.Time, error) {
-	if !strings.HasPrefix(col, "builds_") {
-		return time.Time{}, fmt.Errorf("input doesn't include the right prefix")
-	}
-
-	timePart := strings.SplitN(col, "_", 2)[1]
-	form := "2006_01_02"
-
-	return time.Parse(form, timePart)
 }

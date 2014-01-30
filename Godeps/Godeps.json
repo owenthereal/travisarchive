@@ -20,6 +20,11 @@
 			"Rev": "9eab46a1e15cdc0c9644b0505ffbd2ca905ab997"
 		},
 		{
+			"ImportPath": "github.com/codegangsta/martini-contrib/render",
+			"Comment": "v0.1-123-geb23f49",
+			"Rev": "eb23f4925fb85db43df94d992501513ad9265e6f"
+		},
+		{
 			"ImportPath": "github.com/joho/godotenv",
 			"Rev": "3505098f907089729105e928aebea45f0a643f20"
 		},
