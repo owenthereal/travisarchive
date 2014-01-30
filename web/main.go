@@ -26,7 +26,8 @@ func main() {
 	m.Map(fs)
 	m.Use(martini.Static("../web/public"))
 	m.Use(render.Renderer(render.Options{
-		Layout: "layout",
+		Directory: "../web/templates",
+		Layout:    "layout",
 	}))
 	m.Get("/", func(fs *filestore.S3, r render.Render) {
 		files, err := fs.List("builds")
