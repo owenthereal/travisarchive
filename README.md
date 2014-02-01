@@ -1,4 +1,4 @@
-Travis Archive
+Travis Archive [![Build Status](https://travis-ci.org/jingweno/travisarchive.png?branch=master)](https://travis-ci.org/jingweno/travisarchive)
 ==============
 
 [http://travisarchive.org](http://travisarchive.org)
