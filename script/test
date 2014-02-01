@@ -5,5 +5,4 @@
 #
 # Author: Jingwen Owen Ou
 
-go get code.google.com/p/go.tools/cmd/cover
-godep go test -cover -v ./...
+godep go test -cover ./...

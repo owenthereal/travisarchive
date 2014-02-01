@@ -6,3 +6,4 @@
 # Author: Jingwen Owen Ou
 
 go get github.com/kr/godep
+go get code.google.com/p/go.tools/cmd/cover
