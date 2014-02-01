@@ -1,0 +1,9 @@
+language: go
+go:
+  - 1.2
+install:
+  - script/bootstrap
+  - export PATH="$HOME/gopath/bin:$PATH"
+script:
+  - script/build
+  - script/test
