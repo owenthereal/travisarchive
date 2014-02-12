@@ -11,7 +11,7 @@ import (
 )
 
 var (
-	newBuildCrawlerInterval      = 10 * time.Second
+	newBuildCrawlerInterval      = 30 * time.Second
 	finishedBuildCrawlerInterval = 2 * time.Minute
 )
 
