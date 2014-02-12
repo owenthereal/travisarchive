@@ -16,7 +16,7 @@ type ByTime []filestore.File
 
 func (t ByTime) Len() int           { return len(t) }
 func (t ByTime) Swap(i, j int)      { t[i], t[j] = t[j], t[i] }
-func (t ByTime) Less(i, j int) bool { return t[i].Time.Before(t[j].Time) }
+func (t ByTime) Less(i, j int) bool { return t[i].Time.After(t[j].Time) }
 
 func init() {
 	godotenv.Load("../.env")
