@@ -1,4 +1,4 @@
-# Martini  [![wercker status](https://app.wercker.com/status/174bef7e3c999e103cacfe2770102266 "wercker status")](https://app.wercker.com/project/bykey/174bef7e3c999e103cacfe2770102266) [![Codebot](https://codebot.io/badge/github.com/codegangsta/martini.png)](http://codebot.io/doc/pkg/github.com/codegangsta/martini "Codebot") [![GoDoc](https://godoc.org/github.com/codegangsta/martini?status.png)](http://godoc.org/github.com/codegangsta/martini)
+# Martini  [![wercker status](https://app.wercker.com/status/174bef7e3c999e103cacfe2770102266 "wercker status")](https://app.wercker.com/project/bykey/174bef7e3c999e103cacfe2770102266) [![GoDoc](https://godoc.org/github.com/codegangsta/martini?status.png)](http://godoc.org/github.com/codegangsta/martini)
 
 Martini is a powerful package for quickly writing modular web applications/services in Golang.
 
@@ -49,7 +49,7 @@ Watch the [Demo Video](http://martini.codegangsta.io/#demo)
 * **Fully compatible with the [http.HandlerFunc](http://godoc.org/net/http#HandlerFunc) interface.**
 
 ## More Middleware
-For more middleware and functionality, check out the [martini-contrib](http://github.com/codegangsta/martini-contrib) repository.
+For more middleware and functionality, check out the repositories in the  [martini-contrib](https://github.com/martini-contrib) organization.
 
 ## Table of Contents
 * [Classic Martini](#classic-martini)
@@ -255,19 +255,18 @@ m.Use(func(c martini.Context, log *log.Logger){
 
 ### Where do I find middleware X?
 
-Start by looking in the [martini-contrib](http://github.com/codegangsta/martini-contrib) package. If it is not there feel free to put up a Pull Request for one.
+Start by looking in the [martini-contrib](https://github.com/martini-contrib) projects. If it is not there feel free to contact a martini-contrib team member about adding a new repo to the organization.
 
-* [auth](https://github.com/codegangsta/martini-contrib/tree/master/auth) - Handlers for authentication.
-* [binding](https://github.com/codegangsta/martini-contrib/tree/master/binding) - Handler for mapping/validating a raw request into a structure.
-* [gzip](https://github.com/codegangsta/martini-contrib/tree/master/gzip) - Handler for adding gzip compress to requests
-* [render](https://github.com/codegangsta/martini-contrib/tree/master/render) - Handler that provides a service for easily rendering JSON and HTML templates.
-* [acceptlang](https://github.com/codegangsta/martini-contrib/tree/master/acceptlang) - Handler for parsing the `Accept-Language` HTTP header.
-* [sessions](https://github.com/codegangsta/martini-contrib/tree/master/sessions) - Handler that provides a Session service.
-* [web](https://github.com/codegangsta/martini-contrib/tree/master/web) - web.go Context compatibility.
-* [strip](https://github.com/codegangsta/martini-contrib/tree/master/strip) - URL Prefix stripping.
-* [method](https://github.com/codegangsta/martini-contrib/tree/master/method) - HTTP method overriding via Header or form fields.
-* [secure](https://github.com/codegangsta/martini-contrib/tree/master/secure) - Implements a few quick security wins.
-* [encoder](https://github.com/codegangsta/martini-contrib/tree/master/encoder) - Encoder service for rendering data in several formats and content negotiation.
+* [auth](https://github.com/martini-contrib/auth) - Handlers for authentication.
+* [binding](https://github.com/martini-contrib/binding) - Handler for mapping/validating a raw request into a structure.
+* [gzip](https://github.com/martini-contrib/gzip) - Handler for adding gzip compress to requests
+* [render](https://github.com/martini-contrib/render) - Handler that provides a service for easily rendering JSON and HTML templates.
+* [acceptlang](https://github.com/martini-contrib/acceptlang) - Handler for parsing the `Accept-Language` HTTP header.
+* [sessions](https://github.com/martini-contrib/sessions) - Handler that provides a Session service.
+* [strip](https://github.com/martini-contrib/strip) - URL Prefix stripping.
+* [method](https://github.com/martini-contrib/method) - HTTP method overriding via Header or form fields.
+* [secure](https://github.com/martini-contrib/secure) - Implements a few quick security wins.
+* [encoder](https://github.com/martini-contrib/encoder) - Encoder service for rendering data in several formats and content negotiation.
 
 ### How do I integrate with existing servers?
 
@@ -303,7 +302,7 @@ To have more flexibility over port and host, use the `http.ListenAndServe` funct
 ~~~
 
 ## Contributing
-Martini is meant to be kept tiny and clean. Most contributions should end up in the [martini-contrib](http://github.com/codegangsta/martini-contrib) repository. If you do have a contribution for the core of Martini feel free to put up a Pull Request.
+Martini is meant to be kept tiny and clean. Most contributions should end up in a repository in the [martini-contrib](https://github.com/martini-contrib) organization. If you do have a contribution for the core of Martini feel free to put up a Pull Request.
 
 ## About
 

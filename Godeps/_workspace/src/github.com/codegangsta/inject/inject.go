@@ -13,7 +13,7 @@ type Injector interface {
 	Invoker
 	TypeMapper
 	// SetParent sets the parent of the injector. If the injector cannot find a
-	// dependency in its Type map it will check it's parent before returning an
+	// dependency in its Type map it will check its parent before returning an
 	// error.
 	SetParent(Injector)
 }
@@ -37,7 +37,7 @@ type Invoker interface {
 
 // TypeMapper represents an interface for mapping interface{} values based on type.
 type TypeMapper interface {
-	// Maps the interface{} value based on it's immediate type from reflect.TypeOf.
+	// Maps the interface{} value based on its immediate type from reflect.TypeOf.
 	Map(interface{}) TypeMapper
 	// Maps the interface{} value based on the pointer of an Interface provided.
 	// This is really only useful for mapping a value as an interface, as interfaces

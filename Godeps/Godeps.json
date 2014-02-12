@@ -12,17 +12,17 @@
 		},
 		{
 			"ImportPath": "github.com/codegangsta/inject",
-			"Rev": "346a984957aa24276ebc5e7b16b3ac6a50fe8138"
+			"Rev": "1817ef28a0e76985d513785871920d9f0c3df187"
 		},
 		{
 			"ImportPath": "github.com/codegangsta/martini",
-			"Comment": "v0.1-72-g9eab46a",
-			"Rev": "9eab46a1e15cdc0c9644b0505ffbd2ca905ab997"
+			"Comment": "v0.1-90-g28ffe5d",
+			"Rev": "28ffe5dab70cdacfc4e555315126eb7c60dabe33"
 		},
 		{
 			"ImportPath": "github.com/codegangsta/martini-contrib/render",
-			"Comment": "v0.1-123-geb23f49",
-			"Rev": "eb23f4925fb85db43df94d992501513ad9265e6f"
+			"Comment": "v0.1-159-g8ce6181",
+			"Rev": "8ce6181c2609699e4c7cd30994b76a850a9cdadc"
 		},
 		{
 			"ImportPath": "github.com/joho/godotenv",
