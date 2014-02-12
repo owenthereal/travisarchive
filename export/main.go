@@ -46,10 +46,10 @@ func main() {
 		log.Fatal(err)
 	}
 
-	exportBuilds(cols)
+	exportBuilds(db, cols)
 }
 
-func exportBuilds(cols []string) {
+func exportBuilds(db *db.DB, cols []string) {
 	oneDayAgo := time.Now().Add(-24 * time.Hour).UTC()
 	for _, col := range cols {
 		d, err := util.ParseBuildTime(col)
@@ -61,44 +61,86 @@ func exportBuilds(cols []string) {
 			continue
 		}
 
-		log.Printf("exporting %s...\n", col)
-		cmd := &MongoExport{ExecDir: execDir, URL: mongoURL, ColName: col}
-		outfile, err := cmd.Run()
+		outfile, err := exportC(col)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		log.Printf("exported to %s\n", outfile)
-
-		archiver := &Archiver{outfile}
-		outzip, err := archiver.Archive()
+		outzip, err := archiveFile(outfile)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		log.Printf("archived to %s\n", outzip)
-
-		zipfile, err := os.Open(outzip)
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		defer zipfile.Close()
-
-		filename := fmt.Sprintf("/builds/%s", filepath.Base(outzip))
-		ds, err := filestore.New("s3")
-		if err != nil {
-			log.Println(err)
-			continue
-		}
-		err = ds.Upload(filename, "application/zip", zipfile)
+		err = uploadZipfile(outzip)
 		if err != nil {
 			log.Println(err)
 			continue
 		}
 
-		log.Printf("uploaded to s3 %s", filename)
+		err = dropC(db, col)
+		if err != nil {
+			log.Println(err)
+			continue
+		}
 	}
+}
+
+func dropC(db *db.DB, col string) error {
+	err := db.DropC(col)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("dropped collection %s\n", col)
+
+	return nil
+}
+
+func exportC(col string) (string, error) {
+	log.Printf("exporting %s...\n", col)
+	cmd := &MongoExport{ExecDir: execDir, URL: mongoURL, ColName: col}
+	outfile, err := cmd.Run()
+	if err != nil {
+		return "", err
+	}
+
+	log.Printf("exported to %s\n", outfile)
+
+	return outfile, nil
+}
+
+func archiveFile(outfile string) (string, error) {
+	archiver := &Archiver{outfile}
+	outzip, err := archiver.Archive()
+	if err != nil {
+		return "", err
+	}
+
+	log.Printf("archived to %s\n", outzip)
+
+	return outzip, nil
+}
+
+func uploadZipfile(outzip string) error {
+	zipfile, err := os.Open(outzip)
+	if err != nil {
+		return err
+	}
+	defer zipfile.Close()
+
+	filename := fmt.Sprintf("/builds/%s", filepath.Base(outzip))
+	ds, err := filestore.New("s3")
+	if err != nil {
+		return err
+	}
+	err = ds.Upload(filename, "application/zip", zipfile)
+	if err != nil {
+		return err
+	}
+
+	log.Printf("uploaded to s3 %s", filename)
+
+	return nil
 }

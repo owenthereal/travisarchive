@@ -44,6 +44,10 @@ func (db *DB) C(name string) *mgo.Collection {
 	return db.DB().C(name)
 }
 
+func (db *DB) DropC(name string) error {
+	return db.C(name).DropCollection()
+}
+
 func (db *DB) Upsert(name string, q Query, v interface{}) (updated bool, err error) {
 	info, err := db.C(name).Upsert(q, v)
 	updated = info != nil && info.UpsertedId != nil

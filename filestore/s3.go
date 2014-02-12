@@ -2,10 +2,10 @@ package filestore
 
 import (
 	"fmt"
+	"github.com/jingweno/travisarchive/util"
 	"os"
 	"path/filepath"
 	"strings"
-	"github.com/jingweno/travisarchive/util"
 
 	"launchpad.net/goamz/aws"
 	"launchpad.net/goamz/s3"
