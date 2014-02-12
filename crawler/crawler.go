@@ -103,7 +103,11 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 	for iter.Next(&repo) {
 		build, err := c.crawlFinsihedBuild(repo)
 		if err != nil {
-			c.Logger.Println(err)
+			// this build has real error
+			// otherwise it's still in progress
+			if build == nil {
+				c.Logger.Println(err)
+			}
 			skippedBuilds = append(skippedBuilds, repo.Slug)
 			continue
 		}
