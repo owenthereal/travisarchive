@@ -51,6 +51,7 @@ func main() {
 
 func exportBuilds(db *db.DB, cols []string) {
 	oneDayAgo := time.Now().UTC().Add(-24 * time.Hour)
+	threeDaysAgo := time.Now().UTC().Add(-3 * 24 * time.Hour)
 	for _, col := range cols {
 		d, err := util.ParseBuildTime(col)
 		if err != nil {
@@ -79,10 +80,13 @@ func exportBuilds(db *db.DB, cols []string) {
 			continue
 		}
 
-		err = dropC(db, col)
-		if err != nil {
-			log.Println(err)
-			continue
+		// only drop collections that are 3 days old
+		if d.UTC().Before(threeDaysAgo) {
+			err = dropC(db, col)
+			if err != nil {
+				log.Println(err)
+				continue
+			}
 		}
 	}
 }
