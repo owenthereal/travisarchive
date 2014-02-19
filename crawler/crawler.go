@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -112,6 +113,12 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 			continue
 		}
 
+		err = c.logBuild(build)
+		if err != nil {
+			c.Logger.Println(err)
+			continue
+		}
+
 		colName, updated, err := c.upsertBuild(build)
 		if err != nil {
 			c.Logger.Println(err)
@@ -130,6 +137,17 @@ func (c *FinishedBuildCrawler) doCrawlFinishedBuilds() (colNames map[string]stri
 	}
 
 	return
+}
+
+func (c *FinishedBuildCrawler) logBuild(build *Build) error {
+	b, err := json.Marshal(build)
+	if err != nil {
+		return err
+	}
+
+	fmt.Printf("@[production.build] %s\n", b)
+
+	return nil
 }
 
 func (c *FinishedBuildCrawler) crawlFinsihedBuild(repo *Repo) (build *Build, err error) {
