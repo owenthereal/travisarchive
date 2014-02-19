@@ -50,7 +50,7 @@ func main() {
 }
 
 func exportBuilds(db *db.DB, cols []string) {
-	oneDayAgo := time.Now().Add(-24 * time.Hour).UTC()
+	oneDayAgo := time.Now().UTC().Add(-24 * time.Hour)
 	for _, col := range cols {
 		d, err := util.ParseBuildTime(col)
 		if err != nil {
